@@ -94,6 +94,11 @@ define pgbouncer::instance (
 
   kwalify($schema, $args)
 
+  # make sure that pgbouncer is defined
+  if(!defined(Class['pgbouncer'])){
+    fail('You must include the class pgbouncer before using this function.')
+  }
+
   # get default values
   $databases_conf = merge($databases, $pgbouncer::params::databases)
   $pgbouncer_conf = merge($pgbouncer, $pgbouncer::params::pgbouncer)
