@@ -100,7 +100,7 @@ class pgbouncer (
 
   anchor { 'pgbouncer::begin'   : } ->
   class  { 'pgbouncer::package' : } ~>
-  class  { 'pgbouncer::config'  : }  ~>
+  class  { 'pgbouncer::config'  : } ~>
   class  { 'pgbouncer::service' : } ~>
   anchor { 'pgbouncer::end'     : }
 }
