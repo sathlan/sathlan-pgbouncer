@@ -1,0 +1,7 @@
+# 
+PGB_NUMBER[0]=<%= @index -%>                 # index for the other values; negative disables the pgbouncer
+PGB_NAME[0]="<%= @name -%>"               # short name printed on startup / stop
+PGB_USER[0]="<%= @user ||= 'postgres' -%>"          # user to run as
+PGB_BASEDIR[0]="<%= @basedir ||= '' -%>"               # basedir argument to pgbouncer (absolute path)
+PGB_OPTIONS[0]="<%= @options ||= '' -%>"               # pgbouncer options
+PGB_PREFIXCMD[0]="<%= @prefix_cmd ||= '' -%>"             # prefix command, i.e. nice, linux32, dchroot

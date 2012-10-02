@@ -1,0 +1,1 @@
+require 'puppetlabs_spec_helper/puppet_spec_helper'
