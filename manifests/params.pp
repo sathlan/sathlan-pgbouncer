@@ -1,7 +1,7 @@
 class pgbouncer::params {
   # default parameters.
   case $::operatingsystem {
-    'debian': {
+    'Debian': {
       $package      = 'pgbouncer'
       $service      = 'pgbouncer'
       $conf_dir     = '/etc/pgbouncer'
