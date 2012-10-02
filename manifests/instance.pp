@@ -105,7 +105,7 @@ define pgbouncer::instance (
 
   # install default startup
   concat::fragment { "${name}-instance":
-    target  => $pgbouncer::start,
+    target  => $pgbouncer::start_path,
     content => template('pgbouncer/instance.erb'),
     order   => $order + $index,
     require => Class['pgbouncer::package'],
