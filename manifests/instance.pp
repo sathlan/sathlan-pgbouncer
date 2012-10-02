@@ -38,11 +38,11 @@
 #
 define pgbouncer::instance (
   $index,
+  $databases  = {},
+  $pgbouncer  = {},
   $basedir    = '',
   $options    = '',
   $prefix_cmd = '',
-  $pgbouncer  = $pgbouncer::params::pgbouncer,
-  $databases  = {},
   ) {
   $args   = get_scope_args()
   $schema = {
