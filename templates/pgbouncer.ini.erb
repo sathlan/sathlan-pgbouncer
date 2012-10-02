@@ -1,0 +1,10 @@
+# Managed by puppet.
+[database]
+<% @databases_conf.sort.each do |d, o| -%>
+<%= d -%> = <%= o %>
+<% end -%>
+
+[pgbouncer]
+<% @pgbouncer_conf.sort.each do |k, v| -%>
+<%= k -%> = <%= v %>
+<% end -%>

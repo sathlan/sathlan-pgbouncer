@@ -4,15 +4,16 @@ describe 'pgbouncer' do
   let(:facts) do
     {
       :operatingsystem => 'Debian',
+      :concat_basedir  => '/var/lib/puppet' # required by concat
     }
   end
 
-  describe 'when only required parameters are provided' do
+  describe 'with only required parameters provided' do
     let(:params) do
       {}
     end
     it 'includes the class' do
-      subject.should contain_class('pgbouncer')
+      should contain_class('pgbouncer')
     end
     it 'has the service' do
       subject.should contain_service('pgbouncer')
