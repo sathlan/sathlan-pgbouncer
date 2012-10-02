@@ -51,16 +51,27 @@ define pgbouncer::instance (
     'mapping' => {
       'databases' => {
         'type' => 'map',
+        'mapping' => {
+          '=' => {
+            'type' => 'any'
+          }
+        },
       },
       'pgbouncer' => {
-        'type' => 'map'
+        'type' => 'map',
+        'mapping' => {
+          '=' => {
+            'type' => 'any'
+          }
+        },
       },
       'index' => {
-        'type'    => 'int',
+        'type'    => 'str',
+        'pattern' => '/^[0-9]+$/'
       },
       'user' => {
         'type'    => 'str',
-        'pattern' => '/^\w[-.\w_\d]+$/',
+        'pattern' => '/^\w[-.\w_\d]*$/',
       },
       'basedir' => {
         'type'    => 'str',
@@ -68,11 +79,15 @@ define pgbouncer::instance (
       },
       'options'    => {
         'type'    => 'str',
-        'pattern' => '/^[-.\w_\d]+$/',
+        'pattern' => '/^[-.\w_\d]*$/',
       },
       'prefix_cmd' => {
         'type'    => 'str',
-        'pattern' => '/^[-.\w_\d]+$/',
+        'pattern' => '/^[-.\w_\d]*$/',
+      },
+      'order' => {
+        'type'    => 'str',
+        'pattern' => '/^[0-9]+$/'
       }
     }
   }
