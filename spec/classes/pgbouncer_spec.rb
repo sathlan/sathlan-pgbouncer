@@ -21,5 +21,8 @@ describe 'pgbouncer' do
     it 'has the package installed' do
       subject.should contain_package('pgbouncer')
     end
+    it 'has the init file replaced' do
+      should contain_file('/etc/init.d/pgbouncer')
+    end
   end
 end
