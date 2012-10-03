@@ -104,8 +104,15 @@ define pgbouncer::instance (
   }
 
   # get default values
-  $databases_conf = merge($databases, $pgbouncer::params::databases)
-  $pgbouncer_conf = merge($pgbouncer, $pgbouncer::params::pgbouncer)
+  $pgbouncer_def  = merge($pgbouncer::params::pgbouncer,{
+    'logfile' => "/var/log/postgresql/pgbouncer-${name}.log",
+    'pidfile' => "/var/run/postgresql/pgbouncer-${name}.pid",
+    'auth_file' => '/etc/pgbouncer/userlist.txt',
+    })
+
+  $databases_conf = merge($pgbouncer::params::databases, $databases)
+  $pgbouncer_conf = merge($pgbouncer_def, $pgbouncer)
+
 
   # install default startup
   concat::fragment { "${name}-instance":
