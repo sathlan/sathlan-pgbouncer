@@ -110,7 +110,7 @@ do_start () {
     errors=0
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
-        if [ ( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" ) \
+        if [ \( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" \) \
             -o -z "$instance" ]; then
             log_daemon_msg "Starting pgbouncer ${PGB_NAME[$i]}"
             if start_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
@@ -147,7 +147,7 @@ do_reload () {
     errors=0
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
-        if [ ( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" ) \
+        if [ \( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" \) \
             -o -z "$instance" ]; then
         log_daemon_msg "Reload pgbouncer ${PGB_NAME[$i]}"
         if reload_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
