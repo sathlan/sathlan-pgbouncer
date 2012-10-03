@@ -14,8 +14,8 @@ DESC="Pgbouncer"
 
 USER=pgbouncer
 
-DAEMON=/usr/bin/pgbouncer
 DNAME=pgbouncer
+DAEMON=/usr/sbin/$DNAME
 PROCNAME=$NAME
 
 [ -r /etc/default/pgbouncer ] && . /etc/default/pgbouncer
@@ -40,8 +40,8 @@ check_config()
             echo >&2 "pgbouncer $i: unknown user ${PGB_USER[$i]}"
             errors=$(($errors+1))
         fi
-        if [ ! -d "${PGB_BASEDIR[$i]}" ]; then
-            echo >&2 "pgbouncer $i: no base directory ${PGB_BASEDIR[$i]}"
+        if [ ! -e "${PGB_CONFILE[$i]}" ]; then
+            echo >&2 "pgbouncer $i: no configuration file ${PGB_CONFILE[$i]}"
             errors=$(($errors+1))
         fi
     done
@@ -50,57 +50,77 @@ check_config()
 
 check_config
 
+is_running() {
+    PIDFILE="$1"
+    pidofproc -p $PIDFILE $DAEMON >/dev/null
+}
+
 start_pgbouncer() {
     NAME="$1"
     USER="$2"
-    BASEDIR="$3"
+    CONFILE="$3"
     PREFIXCMD="$4"
     OPTIONS="$5"
+    PIDFILE=/var/run/postgresql/pgbouncer-${NAME}.pid
 
-    #START="--start --quiet --exec ${DAEMON} --name ${NAME} --pidfile ${BASEDIR}/twistd.pid"
+    #START="--start --quiet --exec ${DAEMON} --name ${NAME} --pidfile ${CONFILE}/twistd.pid"
     #[ -n "${USER}" ] && START="${START} --chuid ${USER}"
-    #START="${START} -- start ${BASEDIR} ${OPTIONS}"
+    #START="${START} -- start ${CONFILE} ${OPTIONS}"
     #${PREFIXCMD} start-stop-daemon ${START} >/dev/null 2>&1
-    ${PREFIXCMD} su -s /bin/sh -c "${DAEMON} start ${BASEDIR} ${OPTIONS}" - ${USER}
+    ${PREFIXCMD} su -s /bin/sh -c "${DAEMON} -d ${CONFILE}" - ${USER}
     return $?
 }
 
 stop_pgbouncer() {
     NAME="$1"
     USER="$2"
-    BASEDIR="$3"
+    CONFILE="$3"
     PREFIXCMD="$4"
+    PIDFILE=/var/run/postgresql/pgbouncer-${NAME}.pid
 
-    ${PREFIXCMD} su -s /bin/sh -c "${DAEMON} stop ${BASEDIR}" - ${USER}
-    return $?
+    SIGS='INT TERM KILL'
+
+    for sig in $SIGS
+    do
+        is_running $PIDFILE || return 0
+
+        killproc -p $PIDFILE $DAEMON $sig
+        sleep 1
+    done
+
+    return 2
 }
 
 reload_pgbouncer() {
     NAME="$1"
     USER="$2"
-    BASEDIR="$3"
+    CONFILE="$3"
     PREFIXCMD="$4"
+    PORT="$5"
+    PIDFILE=/var/run/postgresql/pgbouncer-${NAME}.pid
 
-    if test -f ${BASEDIR}/master.cfg; then
-        ${PREFIXCMD} su -s /bin/sh -c "${DAEMON} sighup ${BASEDIR}" - ${USER}
-    else
-        echo -n " not sighup-ing slave"
-    fi
+    is_running $PIDFILE || return 0
+
+    killproc -p $PIDFILE $DAEMON HUP
     return $?
 }
 
 do_start () {
+    local instance="$1"
     errors=0
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
-        log_daemon_msg "Starting pgbouncer ${PGB_NAME[$i]}"
-        if start_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_BASEDIR[$i]}" \
-            "${PGB_PREFIXCMD[$i]}" "${PGB_OPTIONS[$i]}"
-        then
-            log_end_msg 0
-        else
-            log_end_msg 1
-            errors=$(($errors+1))
+        if [ ( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" ) \
+            -o -z "$instance" ]; then
+            log_daemon_msg "Starting pgbouncer ${PGB_NAME[$i]}"
+            if start_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
+                "${PGB_PREFIXCMD[$i]}" "${PGB_OPTIONS[$i]}"
+            then
+                log_end_msg 0
+            else
+                log_end_msg 1
+                errors=$(($errors+1))
+            fi
         fi
     done
     return $errors
@@ -111,7 +131,7 @@ do_stop () {
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
         log_daemon_msg "Stopping pgbouncer ${PGB_NAME[$i]}"
-        if stop_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_BASEDIR[$i]}" \
+        if stop_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
             "${PGB_PREFIXCMD[$i]}"
         then
             log_end_msg 0
@@ -127,14 +147,17 @@ do_reload () {
     errors=0
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
+        if [ ( -n "$instance" -a ${PGB_NAME[$i]} = "$instance" ) \
+            -o -z "$instance" ]; then
         log_daemon_msg "Reload pgbouncer ${PGB_NAME[$i]}"
-        if reload_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_BASEDIR[$i]}" \
+        if reload_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
             "${PGB_PREFIXCMD[$i]}"
         then
             log_end_msg 0
         else
             log_end_msg 1
             errors=$(($errors+1))
+        fi
         fi
     done
     return $errors
@@ -145,9 +168,9 @@ do_restart () {
     for i in ${PGB_NUMBER[@]}; do
         [ $i -ge 0 ] || continue
         log_daemon_msg "Restarting pgbouncer ${PGB_NAME[$i]}"
-        stop_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_BASEDIR[$i]}" \
+        stop_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
             "${PGB_PREFIXCMD[$i]}" || true
-        if start_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_BASEDIR[$i]}" \
+        if start_pgbouncer "${PGB_NAME[$i]}" "${PGB_USER[$i]}" "${PGB_CONFILE[$i]}" \
             "${PGB_PREFIXCMD[$i]}" "${PGB_OPTIONS[$i]}"
         then
             log_end_msg 0
