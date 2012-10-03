@@ -113,6 +113,7 @@ define pgbouncer::instance (
   $databases_conf = merge($pgbouncer::params::databases, $databases)
   $pgbouncer_conf = merge($pgbouncer_def, $pgbouncer)
 
+  $confile = "${pgbouncer::conf_dir}/${name}.ini"
 
   # install default startup
   concat::fragment { "${name}-instance":
@@ -124,7 +125,7 @@ define pgbouncer::instance (
   }
 
   # install configuration
-  file { "${pgbouncer::conf_dir}/${name}.ini":
+  file { $confile:
     ensure  => present,
     owner   => $pgbouncer::user,
     group   => $pgbouncer::group,
