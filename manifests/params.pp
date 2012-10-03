@@ -5,7 +5,7 @@ class pgbouncer::params {
       $package      = 'pgbouncer'
       $service      = 'pgbouncer'
       $conf_dir     = '/etc/pgbouncer'
-      $start_path   = '/etc/defaults/pgbouncer'
+      $start_path   = '/etc/default/pgbouncer'
     }
     default: {
       fail("Unsupported OS: ${::operatingsystem}")
