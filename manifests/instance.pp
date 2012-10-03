@@ -70,6 +70,9 @@ define pgbouncer::instance (
         'type'    => 'str',
         'pattern' => '/^[0-9]+$/'
       },
+      'enable' => {
+        'type'    => 'bool',
+      },
       'user' => {
         'type'    => 'str',
         'pattern' => '/^\w[-.\w_\d]*$/',
