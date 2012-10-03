@@ -1,8 +1,12 @@
 source :rubygems
 
-puppetversion = ENV.key?('PUPPET_VERSION') ? "= #{ENV['PUPPET_VERSION']}" : ['>= 2.7']
+puppetversion = ENV.key?('PUPPET_VERSION') ? "= #{ENV['PUPPET_VERSION']}" : ['~> 2.7']
 gem 'puppet', puppetversion
-gem 'puppet-lint'
-gem 'rspec-puppet'
-gem 'kwalify'
-gem 'puppetlabs_spec_helper', '>= 0.1.0'
+gem 'rake', '~> 0.9.2'
+gem 'rspec', '~> 2.11.0'
+gem 'rspec-puppet', '~> 0.1.4'
+gem 'mocha', '~> 0.12.6'
+gem 'puppet-lint', '~> 0.3.1'
+gem 'iconv', '~> 0.1'
+gem 'kwalify', '~> 0.7.2'
+gem 'puppetlabs_spec_helper', '~> 0.1.0'
