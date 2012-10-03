@@ -19,6 +19,6 @@ describe 'pgbouncer::instance' do
 
   describe 'with only required parameters provided' do
     it { should contain_file('/etc/pgbouncer/instance.ini') }
-    it { should contain_file('/etc/defaults/pgbouncer') }
+    it { should contain_file('/etc/default/pgbouncer') }
   end
 end
