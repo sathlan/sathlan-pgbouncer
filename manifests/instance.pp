@@ -40,6 +40,7 @@ define pgbouncer::instance (
   $index,
   $databases  = {},
   $pgbouncer  = {},
+  $enable     = true,
   $basedir    = '',
   $options    = '',
   $prefix_cmd = '',
