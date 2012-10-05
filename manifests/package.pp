@@ -8,6 +8,6 @@ class pgbouncer::package {
     notify => Package['pgbouncer'],
   }
   package { $pgbouncer::package:
-    ensure => installed,
+    ensure => $pgbouncer::version,
   }
 }

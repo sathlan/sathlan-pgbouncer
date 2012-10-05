@@ -47,6 +47,7 @@ class pgbouncer (
   $ensure     = $pgbouncer::params::ensure,
   $user       = $pgbouncer::params::user,
   $group      = $pgbouncer::params::group,
+  $version    = $pgbouncer::params::version,
   ) inherits pgbouncer::params {
 
   $args   = get_scope_args()
@@ -91,6 +92,11 @@ class pgbouncer (
       'group' => {
         'type'    => 'str',
         'pattern' => '/^[-.\w_\d]+$/',
+        'required' => true,
+      },
+      'version' => {
+        'type'    => 'str',
+        'pattern' => '/^[-~.\w_\d]+$/',
         'required' => true,
       },
     }

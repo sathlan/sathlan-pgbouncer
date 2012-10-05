@@ -16,6 +16,7 @@ class pgbouncer::params {
   $ensure           = running
   $user             = 'postgres'
   $group            = 'postgres'
+  $version          = installed
 
   # default configurations.
   $databases = {
