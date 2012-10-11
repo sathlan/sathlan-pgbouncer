@@ -1,1 +1,3 @@
-"<%= @user -%>" "<%= @pass -%>"
+<% db_users.sort.each do |u, p| -%>
+"<%= u -%>" "<%= p -%>"
+<% end -%>

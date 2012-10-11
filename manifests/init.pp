@@ -32,11 +32,11 @@
 #
 # === Authors
 #
-# Author Name <author@example.com>
+# Author Name <sathlan@unix4.me>
 #
 # === Copyright
 #
-# Copyright 2011 Your name here, unless otherwise noted.
+# Copyright 2012 Sofer Athlan, unless otherwise noted.
 #
 class pgbouncer (
   $package    = $pgbouncer::params::package,
@@ -48,6 +48,7 @@ class pgbouncer (
   $user       = $pgbouncer::params::user,
   $group      = $pgbouncer::params::group,
   $version    = $pgbouncer::params::version,
+  $db_users   = $pgbouncer::params::db_users,
   ) inherits pgbouncer::params {
 
   $args   = get_scope_args()
@@ -98,6 +99,14 @@ class pgbouncer (
         'type'    => 'str',
         'pattern' => '/^[-~.\w_\d]+$/',
         'required' => true,
+      },
+      'db_users' => {
+        'type' => 'map',
+        'mapping' => {
+          '=' => {
+            'type' => 'any'
+          },
+        },
       },
     }
   }
