@@ -1,6 +1,6 @@
 class pgbouncer::params {
   # default parameters.
-  case $::operatingsystem {
+  case $::osfamily {
     'Debian': {
       $package      = 'pgbouncer'
       $service      = 'pgbouncer'
@@ -8,7 +8,7 @@ class pgbouncer::params {
       $start_path   = '/etc/default/pgbouncer'
     }
     default: {
-      fail("Unsupported OS: ${::operatingsystem}")
+      fail("Unsupported OS family: ${::osfamily}")
     }
   }
   $auth_path        = "${conf_dir}/userlist.txt"
