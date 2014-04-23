@@ -97,7 +97,7 @@ class pgbouncer (
       },
       'version' => {
         'type'    => 'str',
-        'pattern' => '/^[-~.\w_\d]+$/',
+        'pattern' => '/^[+-~.\w_\d]+$/',
         'required' => true,
       },
       'db_users' => {
