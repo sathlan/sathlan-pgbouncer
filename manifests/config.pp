@@ -6,6 +6,8 @@ class pgbouncer::config {
     mode  => 0644,
   }
 
+  $db_users = $::pgbouncer::db_users
+
   # install pgbouncer permissions
   file { '/etc/pgbouncer/userlist.txt':
     content => template('pgbouncer/userlist.txt.erb'),
@@ -13,7 +15,7 @@ class pgbouncer::config {
     group   => $pgbouncer::group,
     mode    => '0640',
   }
-  
+
   concat::fragment { "${config}-header":
     target  => $config,
     content => '# MANAGED BY PUPPET',
